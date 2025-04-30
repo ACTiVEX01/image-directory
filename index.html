@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Index of /uploads</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; background: #f4f4f4; }
+    h1 { color: #333; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd; }
+    a { text-decoration: none; color: #007acc; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <h1>Index of /uploads</h1>
+  <table id="fileTable">
+    <thead>
+      <tr><th>Name</th><th>Type</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    async function fetchFileList() {
+      try {
+        const response = await fetch('./');
+        const text = await response.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(text, 'text/html');
+        const links = [...doc.links];
+
+        const tbody = document.querySelector("#fileTable tbody");
+        links.forEach(link => {
+          const name = link.textContent;
+          if (name === '../' || name === 'index.html') return;
+
+          const row = document.createElement('tr');
+          const fileType = name.endsWith('/') ? 'Folder' : 'File';
+          row.innerHTML = `<td><a href="${link.href}">${name}</a></td><td>${fileType}</td>`;
+          tbody.appendChild(row);
+        });
+      } catch (err) {
+        console.error('Failed to load directory contents:', err);
+      }
+    }
+
+    fetchFileList();
+  </script>
+</body>
+</html>
