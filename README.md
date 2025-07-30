@@ -1,6 +1,22 @@
-# Jupyter Notebook to PDF Converter
+# 📓 Jupyter Notebook to PDF Converter
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.7+](https://img.shields.io/badge/python-3.7+-blue.svg)](https://www.python.org/downloads/)
+[![Flask](https://img.shields.io/badge/framework-Flask-red.svg)](https://flask.palletsprojects.com/)
 
 A beautiful web application that converts Jupyter notebook (.ipynb) files to PDF format. Simply upload your notebook file and download the converted PDF instantly.
+
+## 🚀 Live Demo
+
+[Try it online](https://your-domain.com) (Replace with your deployed URL)
+
+## 📸 Screenshots
+
+![Main Interface](https://via.placeholder.com/800x400?text=Upload+Interface)
+*Upload interface with drag-and-drop support*
+
+![Conversion Progress](https://via.placeholder.com/800x400?text=Conversion+Progress)
+*Real-time conversion progress with diagnostic tools*
 
 ## Features
 
@@ -148,10 +164,58 @@ You can modify these settings in `app.py`:
 - Safari 12+
 - Edge 79+
 
-## License
+## 🤝 Contributing
 
-This project is open source and available under the MIT License.
+We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
 
-## Contributing
+### Quick Start for Contributors
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature-name`
+3. Make your changes and test thoroughly
+4. Submit a pull request with a clear description
 
-Feel free to submit issues, fork the repository, and create pull requests for any improvements.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+
+## 📝 Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for a detailed history of changes and version releases.
+
+## 🐛 Issues and Support
+
+- **Found a bug?** [Open an issue](https://github.com/yourusername/jupyter-notebook-to-pdf/issues)
+- **Need help?** Check our [Troubleshooting Guide](TROUBLESHOOTING.md)
+- **Have a question?** Start a [discussion](https://github.com/yourusername/jupyter-notebook-to-pdf/discussions)
+
+## ⭐ Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=yourusername/jupyter-notebook-to-pdf&type=Date)](https://star-history.com/#yourusername/jupyter-notebook-to-pdf&Date)
+
+## 📊 Project Stats
+
+![GitHub repo size](https://img.shields.io/github/repo-size/yourusername/jupyter-notebook-to-pdf)
+![GitHub stars](https://img.shields.io/github/stars/yourusername/jupyter-notebook-to-pdf)
+![GitHub forks](https://img.shields.io/github/forks/yourusername/jupyter-notebook-to-pdf)
+![GitHub issues](https://img.shields.io/github/issues/yourusername/jupyter-notebook-to-pdf)
+
+## 🏆 Contributors
+
+Thanks to all the amazing contributors who have helped improve this project!
+
+[![Contributors](https://contrib.rocks/image?repo=yourusername/jupyter-notebook-to-pdf)](https://github.com/yourusername/jupyter-notebook-to-pdf/graphs/contributors)
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 💖 Support
+
+If this project helped you, please consider:
+- ⭐ Starring the repository
+- 🐛 Reporting bugs
+- 💡 Suggesting new features
+- 🤝 Contributing code
+- 📢 Sharing with others
+
+---
+
+Made with ❤️ by the community

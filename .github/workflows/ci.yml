@@ -1,0 +1,150 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8, 3.9, '3.10', '3.11']
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          texlive-xetex \
+          texlive-fonts-recommended \
+          texlive-plain-generic \
+          pandoc
+
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-cov flake8 black
+
+    - name: Lint with flake8
+      run: |
+        # Stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # Exit-zero treats all errors as warnings
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+    - name: Check code formatting with black
+      run: |
+        black --check --diff .
+
+    - name: Test application startup
+      run: |
+        timeout 10s python app.py &
+        sleep 5
+        curl -f http://localhost:5000/ || exit 1
+        pkill -f "python app.py"
+
+    - name: Test diagnostic tool
+      run: |
+        # Create a test notebook
+        cat > test_notebook.ipynb << 'EOF'
+        {
+         "cells": [
+          {
+           "cell_type": "markdown",
+           "metadata": {},
+           "source": ["# Test Notebook"]
+          }
+         ],
+         "metadata": {
+          "kernelspec": {
+           "display_name": "Python 3",
+           "language": "python",
+           "name": "python3"
+          },
+          "language_info": {
+           "name": "python",
+           "version": "3.8.5"
+          }
+         },
+         "nbformat": 4,
+         "nbformat_minor": 4
+        }
+        EOF
+        
+        # Test the diagnostic tool
+        python diagnose_notebook.py test_notebook.ipynb
+
+    - name: Test conversion functionality
+      run: |
+        # Start the app in background
+        python app.py &
+        APP_PID=$!
+        sleep 5
+        
+        # Test file upload and conversion
+        response=$(curl -s -X POST -F "file=@test_notebook.ipynb" http://localhost:5000/upload)
+        echo "Response: $response"
+        
+        # Check if conversion was successful
+        if echo "$response" | grep -q '"success": true'; then
+          echo "✅ Conversion test passed"
+        else
+          echo "❌ Conversion test failed"
+          kill $APP_PID
+          exit 1
+        fi
+        
+        kill $APP_PID
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Install security tools
+      run: |
+        pip install bandit safety
+    
+    - name: Run security check with bandit
+      run: |
+        bandit -r . -f json -o bandit-report.json || true
+        bandit -r . --severity-level medium
+    
+    - name: Check for known vulnerabilities with safety
+      run: |
+        pip install -r requirements.txt
+        safety check
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Build Docker image
+      run: |
+        docker build -t jupyter-pdf-converter .
+      continue-on-error: true  # Docker file might not exist yet
