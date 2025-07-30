@@ -270,7 +270,10 @@
             <div class="file-size" id="file-size"></div>
         </div>
 
-        <button class="btn" id="convert-btn" style="display: none;">Convert to PDF</button>
+        <div style="display: none;" id="action-buttons">
+            <button class="btn" id="convert-btn">Convert to PDF</button>
+            <button class="btn" id="diagnose-btn" style="background: linear-gradient(135deg, #ff9500 0%, #ff6b00 100%); margin-left: 10px;">Diagnose Issues</button>
+        </div>
 
         <div class="progress-container" id="progress-container">
             <div class="spinner" id="spinner"></div>
@@ -310,6 +313,8 @@
         const fileName = document.getElementById('file-name');
         const fileSize = document.getElementById('file-size');
         const convertBtn = document.getElementById('convert-btn');
+        const diagnoseBtn = document.getElementById('diagnose-btn');
+        const actionButtons = document.getElementById('action-buttons');
         const progressContainer = document.getElementById('progress-container');
         const progressFill = document.getElementById('progress-fill');
         const progressText = document.getElementById('progress-text');
@@ -364,7 +369,7 @@
             fileSize.textContent = formatFileSize(file.size);
             
             fileInfo.style.display = 'block';
-            convertBtn.style.display = 'inline-block';
+            actionButtons.style.display = 'block';
             resultContainer.style.display = 'none';
         }
 
@@ -377,6 +382,7 @@
         }
 
         convertBtn.addEventListener('click', convertFile);
+        diagnoseBtn.addEventListener('click', diagnoseFile);
 
         function convertFile() {
             if (!selectedFile) {
@@ -434,6 +440,63 @@
             });
         }
 
+        function diagnoseFile() {
+            if (!selectedFile) {
+                showResult('Please select a file first.', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+
+            // Show progress
+            progressContainer.style.display = 'block';
+            spinner.style.display = 'block';
+            progressText.textContent = 'Diagnosing your notebook...';
+            diagnoseBtn.disabled = true;
+            convertBtn.disabled = true;
+            resultContainer.style.display = 'none';
+
+            fetch('/diagnose', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                progressContainer.style.display = 'none';
+                spinner.style.display = 'none';
+                diagnoseBtn.disabled = false;
+                convertBtn.disabled = false;
+
+                if (data.valid) {
+                    const info = data.info;
+                    const message = `✅ ${data.message}<br><br>📊 <strong>Notebook Info:</strong><br>` +
+                        `• ${info.cell_count} cells<br>` +
+                        `• Cell types: ${Object.entries(info.cell_types).map(([type, count]) => `${count} ${type}`).join(', ')}<br>` +
+                        `• Format version: ${info.nbformat_version}`;
+                    showResult(message, 'success');
+                } else {
+                    let message = '❌ <strong>Issues found:</strong><br>';
+                    data.issues.forEach(issue => {
+                        message += `• ${issue}<br>`;
+                    });
+                    message += '<br>💡 <strong>Suggestions:</strong><br>';
+                    data.suggestions.forEach(suggestion => {
+                        message += `• ${suggestion}<br>`;
+                    });
+                    showResult(message, 'error');
+                }
+            })
+            .catch(error => {
+                progressContainer.style.display = 'none';
+                spinner.style.display = 'none';
+                diagnoseBtn.disabled = false;
+                convertBtn.disabled = false;
+                showResult('❌ An error occurred during diagnosis. Please try again.', 'error');
+                console.error('Error:', error);
+            });
+        }
+
         function showResult(message, type) {
             resultMessage.innerHTML = message;
             resultContainer.className = 'result-container result-' + type;
@@ -471,7 +534,7 @@
             downloadData = null;
             fileInput.value = '';
             fileInfo.style.display = 'none';
-            convertBtn.style.display = 'none';
+            actionButtons.style.display = 'none';
             progressContainer.style.display = 'none';
             resultContainer.style.display = 'none';
             downloadBtn.style.display = 'none';

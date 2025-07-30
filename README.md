@@ -62,9 +62,13 @@ http://localhost:5000
 
 3. **Upload and convert:**
    - Click the upload area or drag and drop your .ipynb file
-   - Click "Convert to PDF"
+   - Click "Convert to PDF" to convert, or "Diagnose Issues" to check for problems
    - Wait for the conversion to complete
    - Download your PDF file
+
+4. **If you get an error:**
+   - Use the "Diagnose Issues" button to get detailed information
+   - See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for common solutions
 
 ## Project Structure
 
