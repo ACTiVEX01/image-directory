@@ -1,0 +1,36 @@
+{
+  "name": "restaurant-management-platform",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Multi-tenant Restaurant Management Platform with POS, KDS, Inventory, and more",
+  "main": "index.js",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "test": "turbo run test",
+    "test:e2e": "turbo run test:e2e",
+    "db:generate": "turbo run db:generate",
+    "db:migrate": "turbo run db:migrate",
+    "db:seed": "turbo run db:seed",
+    "clean": "turbo run clean",
+    "type-check": "turbo run type-check"
+  },
+  "devDependencies": {
+    "@turbo/gen": "^1.11.2",
+    "turbo": "latest",
+    "prettier": "^3.1.1",
+    "eslint": "^8.55.0",
+    "typescript": "^5.3.3"
+  },
+  "packageManager": "pnpm@8.10.5",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}
